@@ -16,7 +16,10 @@ async function start() {
 		console.log(req.method, req.url);
 		const result = await client.query('SELECT * FROM test_data');
 		res.setHeader('Content-Type', 'application/json');
-		res.end(JSON.stringify(result.rows));
+		res.end(JSON.stringify({
+			status: "deployed from mac",
+			rows: result.rows
+}));
 	});
 server.listen(3000, '0.0.0.0');
 }
