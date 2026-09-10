@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+	push:
+    		branches:
+      		- main
+
+jobs:
+	deploy:
+    		runs-on: ubuntu-latest
+	steps:
+     		- name: Checkout code
+      		 uses: actions/checkout@v4
+
+		name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+	- name: Checkout code
+        uses: actions/checkout@v4
+
+	- name: Build Docker image
+        run: docker build -t devops-app:test .
+	
+	-name: Validate Docker Compose
+	run: docker compose config
