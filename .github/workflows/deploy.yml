@@ -18,3 +18,14 @@ jobs:
 
       - name: Validate Docker Compose
         run: docker compose config
+
+      - name: Deploy to Droplet
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.SSH_HOST }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/mitziel/node-postgres-app
+            git pull origin main
+            docker compose up -d --build
