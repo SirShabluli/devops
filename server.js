@@ -17,7 +17,7 @@ async function start() {
 		const result = await client.query('SELECT * FROM not_a_faucken_table');
 		res.setHeader('Content-Type', 'application/json');
 		res.end(JSON.stringify({
-			status: "deployed from mac",
+			status: "Automatic deployment from GitHub Actions",
 			rows: result.rows
 }));
 	});
