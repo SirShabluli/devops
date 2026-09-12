@@ -28,21 +28,32 @@ jobs:
           script: |
             set -e
 
-            echo "Connected to Droplet"
-
             cd /home/mitziel/node-postgres-app
 
-            echo "Before deploy:"
-            git rev-parse --short HEAD
+            echo "Saving current working commit..."
+            PREVIOUS_COMMIT=$(git rev-parse HEAD)
+            echo "Previous commit: $PREVIOUS_COMMIT"
 
+            echo "Deploying new version..."
             git fetch origin main
             git reset --hard origin/main
 
-            echo "After pull:"
-            git rev-parse --short HEAD
-
             docker compose up -d --build
 
-            docker compose ps
+            echo "Checking new version..."
 
-            curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083
+            if curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083; then
+              echo "Deployment successful"
+            else
+              echo "Deployment failed — rolling back to $PREVIOUS_COMMIT"
+
+              git reset --hard "$PREVIOUS_COMMIT"
+              docker compose up -d --build
+
+              echo "Checking rolled back version..."
+              curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083
+
+              echo "Rollback successful"
+              exit 1
+            fi
+ 
