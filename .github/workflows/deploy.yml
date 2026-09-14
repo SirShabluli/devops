@@ -56,4 +56,11 @@ jobs:
               echo "Rollback successful"
               exit 1
             fi
- 
+      - name: Validate Docker Compose
+        env:
+          DB_HOST: db
+          DB_PORT: 5432
+          DB_USER: test
+          DB_PASSWORD: test
+          DB_NAME: test
+        run: docker compose config
