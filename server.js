@@ -14,7 +14,7 @@ async function start() {
 	console.log('Connected to PostgreSQL');
 	const server = http.createServer(async (req, res) => {
 		console.log(req.method, req.url);
-		const result = await client.query('SELECT * FROM not_a_faucken_table');
+		const result = await client.query('SELECT * FROM test_data');
 		res.setHeader('Content-Type', 'application/json');
 		res.end(JSON.stringify({
 			status: "Automatic deployment WORKS",
