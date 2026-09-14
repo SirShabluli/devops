@@ -17,6 +17,12 @@ jobs:
         run: docker build -t devops-app:test .
 
       - name: Validate Docker Compose
+        env:
+          DB_HOST: db
+          DB_PORT: "5432"
+          DB_USER: test
+          DB_PASSWORD: test
+          DB_NAME: test
         run: docker compose config
 
       - name: Deploy to Droplet
@@ -42,7 +48,7 @@ jobs:
 
             echo "Checking new version..."
 
-            if curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083; then
+            if curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083/ready; then
               echo "Deployment successful"
             else
               echo "Deployment failed — rolling back to $PREVIOUS_COMMIT"
@@ -51,16 +57,8 @@ jobs:
               docker compose up -d --build
 
               echo "Checking rolled back version..."
-              curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083
+              curl --fail --retry 10 --retry-delay 2 --retry-all-errors http://127.0.0.1:8083/ready
 
               echo "Rollback successful"
               exit 1
             fi
-      - name: Validate Docker Compose
-        env:
-          DB_HOST: db
-          DB_PORT: 5432
-          DB_USER: test
-          DB_PASSWORD: test
-          DB_NAME: test
-        run: docker compose config
