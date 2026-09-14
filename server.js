@@ -14,6 +14,11 @@ async function start() {
 	console.log('Connected to PostgreSQL');
 	const server = http.createServer(async (req, res) => {
 		console.log(req.method, req.url);
+		// health check
+		if (req.url === "/health") {
+			res.writeHead(200, { "Content-Type": "application/json" });
+			return res.end(JSON.stringify({ status: "ok" }));
+		  }
 		const result = await client.query('SELECT * FROM test_data');
 		res.setHeader('Content-Type', 'application/json');
 		res.end(JSON.stringify({
